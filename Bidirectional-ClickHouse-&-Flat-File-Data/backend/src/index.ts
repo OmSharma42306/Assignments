@@ -4,6 +4,7 @@ import bodyParser from "body-parser";
 import { Request,Response } from "express";
 import createClientClickHouse from "./clickhouseClient";
 import dotenv from 'dotenv'
+import apiRouter from "./api/api";
 dotenv.config();
 
 const PORT = 3000;
@@ -12,7 +13,7 @@ const app = express();
 
 app.use(bodyParser.json());
 app.use(cors());
-
+app.use("/api/v1",apiRouter);
 
 
 app.get('/',async (req:Request,res:Response)=>{
