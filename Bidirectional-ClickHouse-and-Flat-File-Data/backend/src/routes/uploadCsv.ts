@@ -18,18 +18,24 @@ router.get('/dd',(req:Request,res:Response)=>{
 router.post('/upload-csv',upload.single('file'),async(req:Request,res:Response)=>{
     const filePath = req.file?.path;
     const rows : any[] = [];
+    const headers:Set<string> = new Set();
     if(!filePath){
         res.status(400).json({error:"No file Uploaded"})
         return;
     }
 
     // parsing the csv format..
-    fs.createReadStream(filePath).pipe(csvParser()).on('data',(data)=>{rows.push(data)}).on('end',()=>{
+    fs.createReadStream(filePath).pipe(csvParser()).on('data',(data)=>{
+        rows.push(data);
+        Object.keys(data).forEach((key)=>headers.add(key));
+
+    }).on('end',()=>{
         res.json({
             message:"CSV Uploded and Parsed!",
             rowCount:rows.length,
             preview:rows.slice(0,5),
-            rows:rows
+            rows:rows,
+            headers:Array.from(headers)
         })
     })
 
