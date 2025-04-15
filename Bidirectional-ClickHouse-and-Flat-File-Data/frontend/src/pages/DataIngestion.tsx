@@ -7,6 +7,8 @@ import { Select } from '../components/Select';
 import { Checkbox } from '../components/Checkbox';
 import { ProgressBar } from '../components/ProgressBar';
 import { StatusBadge } from '../components/StatusBadge';
+import axios from 'axios';
+
 
 type DataSource = 'clickhouse' | 'flatfile';
 type Status = 'idle' | 'connecting' | 'fetching' | 'ingesting' | 'completed' | 'error';
@@ -15,6 +17,40 @@ export const DataIngestion: React.FC = () => {
   const [source, setSource] = useState<DataSource>('clickhouse');
   const [status, setStatus] = useState<Status>('idle');
   const [progress, setProgress] = useState(0);
+  const [file,setFile] = useState<File|null>(null);
+
+  const handleChange = (e:React.ChangeEvent<HTMLInputElement>)=>{
+    if(e.target.files && e.target.files[0]){
+      setFile(e.target.files[0])
+    }
+  }
+
+  const handleUpload = async() =>{
+    if(!file){
+      alert('Please upload a File First!')
+      return;
+    }
+
+    const formData = new FormData();
+    formData.append('file',file);
+
+    try{  
+      const response = await axios.post('http://localhost:3000/api/v1/data/upload-csv',formData,{
+        headers:{
+          'Content-Type': 'multipart/form-data', 
+        }
+
+      })
+
+      console.log("Upload Successful",response.data)
+      
+
+    }catch(error){
+      console.error(error);
+    }
+
+
+  }
 
   return (
     <div className="min-h-screen bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
@@ -51,8 +87,9 @@ export const DataIngestion: React.FC = () => {
               </div>
             ) : (
               <div className="space-y-4">
-                <Input label="File Path" type="file" accept=".csv,.txt" />
-                <Input label="Delimiter" placeholder="," />
+                <Input label="File Path" type="file" accept=".csv,.txt" onChange={handleChange} />
+                {/* <Input label="Delimiter" placeholder="," /> */}
+                <button onClick={handleUpload}>Upload</button>
               </div>
             )}
           </div>
