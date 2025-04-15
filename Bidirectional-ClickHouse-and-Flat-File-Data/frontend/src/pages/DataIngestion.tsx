@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { Database, Upload, ArrowLeftRight } from 'lucide-react';
+import React, { useEffect, useState } from 'react';
+import { Database, Upload, ArrowLeftRight, Divide } from 'lucide-react';
 import { Button } from '../components/Button';
 import { Card } from '../components/Card';
 import { Input } from '../components/Input';
@@ -18,12 +18,16 @@ export const DataIngestion: React.FC = () => {
   const [status, setStatus] = useState<Status>('idle');
   const [progress, setProgress] = useState(0);
   const [file,setFile] = useState<File|null>(null);
+  const [data,setData] = useState<[]>([]);
+  const [headers,setHeaders] = useState<[]|any>([]);
+  const [selectedHeaders,setSelectedHeaders] = useState<string[]>([]);
 
   const handleChange = (e:React.ChangeEvent<HTMLInputElement>)=>{
     if(e.target.files && e.target.files[0]){
       setFile(e.target.files[0])
     }
   }
+
 
   const handleUpload = async() =>{
     if(!file){
@@ -43,15 +47,34 @@ export const DataIngestion: React.FC = () => {
       })
 
       console.log("Upload Successful",response.data)
-      
+      console.log("Rows: ",response.data.rows);
+      setData(response.data.rows);
+      console.log("Headers Data",response.data.headers);
+      setHeaders(response.data.headers);
 
     }catch(error){
       console.error(error);
     }
 
-
+   
   }
 
+  const handleCheckboxChange = (header:string) =>{
+    setSelectedHeaders((prevSelected)=>{
+      if(prevSelected.includes(header)){
+        return prevSelected.filter((h)=>h!==header)
+      }else{
+        return [...prevSelected,header];
+      }
+    })
+  }
+
+  async function sendxData(){
+    const response = await axios.post('http://localhost:3000/api/v1/send/insert-to-clickHouse',{rows:data});
+    console.log(response.data);
+  }
+
+  console.log("selcted headers",selectedHeaders);
   return (
     <div className="min-h-screen bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-4xl mx-auto space-y-8">
@@ -90,6 +113,10 @@ export const DataIngestion: React.FC = () => {
                 <Input label="File Path" type="file" accept=".csv,.txt" onChange={handleChange} />
                 {/* <Input label="Delimiter" placeholder="," /> */}
                 <button onClick={handleUpload}>Upload</button>
+                {data? <button onClick={sendxData}>
+                senddata
+                </button> :"no dadta"}
+                
               </div>
             )}
           </div>
@@ -99,12 +126,23 @@ export const DataIngestion: React.FC = () => {
           <div className="space-y-6">
             <h2 className="text-xl font-semibold text-gray-900">Column Selection</h2>
             <div className="grid grid-cols-3 gap-4">
-              <Checkbox label="id" />
+              {
+
+                headers? headers.map((e:any,key:number)=>{
+                  console.log(e);
+                return  <Checkbox key={key} label={e} checked={selectedHeaders.includes(e)} onChange={()=>handleCheckboxChange(e)}/>
+                }):<Checkbox   label='Loading Headers'/>
+                
+
+              }
+              
+              
+              {/* <Checkbox label="id" />
               <Checkbox label="name" />
               <Checkbox label="email" />
               <Checkbox label="created_at" />
               <Checkbox label="updated_at" />
-              <Checkbox label="status" />
+              <Checkbox label="status" /> */}
             </div>
           </div>
         </Card>
