@@ -11,7 +11,10 @@ const PORT = 3000;
 
 const app = express();
 
-app.use(bodyParser.json());
+// app.use(bodyParser.json());
+// allow larger JSON bodies (e.g. up to 50 MB)
+app.use(bodyParser.json({ limit: "50mb" }));
+app.use(bodyParser.urlencoded({ limit: "50mb", extended: true }));
 app.use(cors());
 app.use("/api/v1",apiRouter);
 

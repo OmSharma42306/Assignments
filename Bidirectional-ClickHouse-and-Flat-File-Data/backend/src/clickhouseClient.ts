@@ -10,7 +10,8 @@ async function createClientClickHouse(){
         // Configuration.
         url:process.env.url,
         username:'default',
-        password:process.env.password
+        password:process.env.password,
+        request_timeout:0
     
     })
     
