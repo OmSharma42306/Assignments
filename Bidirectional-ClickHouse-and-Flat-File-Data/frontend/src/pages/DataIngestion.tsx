@@ -21,6 +21,8 @@ export const DataIngestion: React.FC = () => {
   const [data,setData] = useState<[]>([]);
   const [headers,setHeaders] = useState<[]|any>([]);
   const [selectedHeaders,setSelectedHeaders] = useState<string[]>([]);
+  const [tableName,setTableName] = useState<string>("");
+  const [rowsCountAfterCsvUpdate,setRowsCountAfterCsvUpdate] = useState<string>("");
 
   const handleChange = (e:React.ChangeEvent<HTMLInputElement>)=>{
     if(e.target.files && e.target.files[0]){
@@ -46,12 +48,14 @@ export const DataIngestion: React.FC = () => {
 
       })
 
+      
+
       console.log("Upload Successful",response.data)
       console.log("Rows: ",response.data.rows);
       setData(response.data.rows);
       console.log("Headers Data",response.data.headers);
       setHeaders(response.data.headers);
-
+      setRowsCountAfterCsvUpdate(response.data.rowCount);
     }catch(error){
       console.error(error);
     }
@@ -70,8 +74,22 @@ export const DataIngestion: React.FC = () => {
   }
 
   async function sendxData(){
-    const response = await axios.post('http://localhost:3000/api/v1/send/insert-to-clickHouse',{rows:data});
+   
+   const filteredData = data.map((row:any)=>{
+    const filteredRow : any = {};
+    selectedHeaders.forEach((header)=>{
+      filteredRow[header] = row[header];
+    })
+    return filteredRow;
+   })
+  
+   console.log("FILTERD",filteredData)
+    const response = await axios.post('http://localhost:3000/api/v1/send/insert-to-clickHouse',{rows:filteredData,headers:headers,tableName:tableName},);
+    console.log("RESPOSE",response)
     console.log(response.data);
+    
+
+    
   }
 
   console.log("selcted headers",selectedHeaders);
@@ -111,7 +129,9 @@ export const DataIngestion: React.FC = () => {
             ) : (
               <div className="space-y-4">
                 <Input label="File Path" type="file" accept=".csv,.txt" onChange={handleChange} />
-                {/* <Input label="Delimiter" placeholder="," /> */}
+                <Input label="Table Name" placeholder="TableName" onChange={(e)=>{
+                  setTableName(e.target.value);
+                }} />
                 <button onClick={handleUpload}>Upload</button>
                 {data? <button onClick={sendxData}>
                 senddata
@@ -123,6 +143,7 @@ export const DataIngestion: React.FC = () => {
         </Card>
 
         <Card>
+       
           <div className="space-y-6">
             <h2 className="text-xl font-semibold text-gray-900">Column Selection</h2>
             <div className="grid grid-cols-3 gap-4">
@@ -135,7 +156,6 @@ export const DataIngestion: React.FC = () => {
                 
 
               }
-              
               
               {/* <Checkbox label="id" />
               <Checkbox label="name" />
@@ -151,9 +171,9 @@ export const DataIngestion: React.FC = () => {
           <div className="space-y-6">
             <h2 className="text-xl font-semibold text-gray-900">Progress</h2>
             <ProgressBar progress={progress} />
-            <div className="flex justify-between text-sm text-gray-600">
-              <span>Records processed: 1,234</span>
-              <span>Total records: 5,000</span>
+            <div className="flex justify-between text-big text-gray-800">
+              
+              <span className=''>Total Rows : {rowsCountAfterCsvUpdate} </span>
             </div>
           </div>
         </Card>
