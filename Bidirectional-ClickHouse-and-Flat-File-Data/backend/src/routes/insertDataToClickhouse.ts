@@ -8,7 +8,7 @@ function inferType(value: any): string {
     return "String";
 }  
 router.post('/insert-to-clickHouse',async(req:Request,res:Response)=>{
-        const {rows,host,port,database,jwtToken,headers} = req.body;
+        const {rows,host,port,database,jwtToken,headers,tableName} = req.body;
 
         console.log(rows)
         if(!rows || !Array.isArray(rows)){
@@ -40,7 +40,6 @@ router.post('/insert-to-clickHouse',async(req:Request,res:Response)=>{
                 const type = inferType(sampleValue)
                 return `\`${header}\` ${type}`;
             }).join(", ")
-            const tableName = 'cc';
             const createSql = `
             CREATE TABLE IF NOT EXISTS \`${tableName}\` (
             ${columnSql}
@@ -51,11 +50,8 @@ router.post('/insert-to-clickHouse',async(req:Request,res:Response)=>{
 
             await client.command({ query: createSql });
 
-
-
-
             const insertStream = await client.insert({
-                table:'cc',
+                table:tableName,
                 values:rows,
                 format:'JSONEachRow'
             })

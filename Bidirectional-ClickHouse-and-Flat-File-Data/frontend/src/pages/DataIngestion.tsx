@@ -73,7 +73,7 @@ export const DataIngestion: React.FC = () => {
     })
   }
 
-  async function sendxData(){
+  async function sendDataToClickHouse(){
    
    const filteredData = data.map((row:any)=>{
     const filteredRow : any = {};
@@ -133,9 +133,9 @@ export const DataIngestion: React.FC = () => {
                   setTableName(e.target.value);
                 }} />
                 <button onClick={handleUpload}>Upload</button>
-                {data? <button onClick={sendxData}>
+                {data? <Button onClick={sendDataToClickHouse}>
                 senddata
-                </button> :"no dadta"}
+                </Button> :"no dadta"}
                 
               </div>
             )}
@@ -180,7 +180,7 @@ export const DataIngestion: React.FC = () => {
 
         <div className="flex justify-end space-x-4">
           <Button variant="outline">Preview Data</Button>
-          <Button icon={ArrowLeftRight}>Start Ingestion</Button>
+          <Button icon={ArrowLeftRight} onClick={sendDataToClickHouse}>Start Ingestion</Button>
         </div>
       </div>
     </div>
