@@ -28,7 +28,8 @@ router.post('/upload-csv',upload.single('file'),async(req:Request,res:Response)=
         res.json({
             message:"CSV Uploded and Parsed!",
             rowCount:rows.length,
-            preview:rows.slice(0,5)
+            preview:rows.slice(0,5),
+            rows:rows
         })
     })
 
