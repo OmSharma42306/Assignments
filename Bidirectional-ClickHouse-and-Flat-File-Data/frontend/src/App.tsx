@@ -1,13 +1,12 @@
-import { useState } from 'react'
-import './App.css'
+import { DataIngestion } from './pages/DataIngestion'
 
 function App() {
   
 
   return (
     <>
-     <h1 className='bg-red-400'>gi</h1>
-         </>
+    <DataIngestion/>
+    </>
   )
 }
 
