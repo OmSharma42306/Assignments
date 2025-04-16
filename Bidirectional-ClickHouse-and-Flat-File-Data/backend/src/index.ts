@@ -2,7 +2,7 @@ import express from "express";
 import cors from "cors";
 import bodyParser from "body-parser";
 import { Request,Response } from "express";
-import createClientClickHouse from "./clickhouseClient";
+import createClientClickHouse from "./createClientClickHouse";
 import dotenv from 'dotenv'
 import apiRouter from "./api/api";
 dotenv.config();
@@ -20,18 +20,7 @@ app.use("/api/v1",apiRouter);
 
 
 app.get('/',async (req:Request,res:Response)=>{
-
-    const client = await createClientClickHouse();
-
-    const resultSet = await client.query({
-        query: 'SELECT * from xyz',
-        format: 'JSONEachRow',
-      })
-      
-    const rows = await resultSet.json() ;
-    console.log(rows)
-
-    res.json({msg:"Backend is UP!",rows});
+    res.json({msg:"Backend is UP!"});
     return;
 })
 

@@ -1,0 +1,28 @@
+1. How to upload and parse CSV files using Node.js, Express, multer, and csv-parser in TypeScript?
+
+2. How to dynamically extract headers from a CSV and show them as checkboxes in React?
+
+3. How to filter JSON rows based on selected keys before inserting them?
+
+4. How to insert an array of JSON objects into a ClickHouse table using the @clickhouse/client in Node.js?
+
+5. How to create a new ClickHouse table dynamically based on inferred column types from JSON?
+
+6. What does "413 Payload Too Large" mean in Express, and how to fix it?
+
+7. How to stream CSV data from ClickHouse as a downloadable file in Express?
+
+8. How to generate a CREATE TABLE SQL from a set of headers and values dynamically?
+
+9. How to send JWT token and ClickHouse credentials securely from a React frontend to the backend?
+
+10. What is the difference between Flat File → ClickHouse vs ClickHouse → Flat File ingestion workflows?
+
+11. How to export ClickHouse data with SELECT ... FORMAT CSV and pipe it as a file in the response?
+
+12. How to handle data type inference (String vs Int32) in TypeScript based on sample values?
+
+13. How to create a fullstack MERN-style ingestion tool with CSV upload, header selection, and database insert?
+
+14. How to create a professional assignment summary markdown for recruiter submission?
+

@@ -1,6 +1,6 @@
 import express from "express";
 import { Request,Response } from "express";
-import createClientClickHouse from "../clickhouseClient";
+import createClientClickHouse from "../createClientClickHouse";
 const router = express.Router();
 function inferType(value: any): string {
     if (!value || value === "") return "String";
@@ -20,13 +20,7 @@ router.post('/insert-to-clickHouse',async(req:Request,res:Response)=>{
             res.status(400).json({ error: "Missing headers" });
             return;
           }
-        
-     
-        
-        //   if (!tableName) {
-        //     return res.status(400).json({ error: "Missing table name" });
-        //   }
-
+    
         try{
             // 1. First Create a ClientHouse
             const client = await createClientClickHouse();
@@ -70,8 +64,6 @@ router.post('/insert-to-clickHouse',async(req:Request,res:Response)=>{
     
     return;
 })
-
-
 
 
 export default router;

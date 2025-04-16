@@ -17,12 +17,17 @@ export const DataIngestion: React.FC = () => {
   const [source, setSource] = useState<DataSource>('clickhouse');
   const [status, setStatus] = useState<Status>('idle');
   const [progress, setProgress] = useState(0);
+
+  // State Related to FlatFile to CLickHouse
   const [file,setFile] = useState<File|null>(null);
   const [data,setData] = useState<[]>([]);
   const [headers,setHeaders] = useState<[]|any>([]);
   const [selectedHeaders,setSelectedHeaders] = useState<string[]>([]);
   const [tableName,setTableName] = useState<string>("");
   const [rowsCountAfterCsvUpdate,setRowsCountAfterCsvUpdate] = useState<string>("");
+
+  // State Related to ClickHouse to Flatfile
+
 
   const handleChange = (e:React.ChangeEvent<HTMLInputElement>)=>{
     if(e.target.files && e.target.files[0]){
@@ -41,26 +46,17 @@ export const DataIngestion: React.FC = () => {
     formData.append('file',file);
 
     try{  
-      const response = await axios.post('http://localhost:3000/api/v1/data/upload-csv',formData,{
+      const response = await axios.post('http://localhost:3000/api/v1/csv/upload-csv',formData,{
         headers:{
           'Content-Type': 'multipart/form-data', 
         }
-
       })
-
-      
-
-      console.log("Upload Successful",response.data)
-      console.log("Rows: ",response.data.rows);
       setData(response.data.rows);
-      console.log("Headers Data",response.data.headers);
       setHeaders(response.data.headers);
       setRowsCountAfterCsvUpdate(response.data.rowCount);
     }catch(error){
       console.error(error);
     }
-
-   
   }
 
   const handleCheckboxChange = (header:string) =>{
@@ -73,9 +69,8 @@ export const DataIngestion: React.FC = () => {
     })
   }
 
-  async function sendDataToClickHouse(){
-   
-   const filteredData = data.map((row:any)=>{
+  async function sendDataToClickHouse(){  
+    const filteredData = data.map((row:any)=>{
     const filteredRow : any = {};
     selectedHeaders.forEach((header)=>{
       filteredRow[header] = row[header];
@@ -83,13 +78,12 @@ export const DataIngestion: React.FC = () => {
     return filteredRow;
    })
   
-   console.log("FILTERD",filteredData)
-    const response = await axios.post('http://localhost:3000/api/v1/send/insert-to-clickHouse',{rows:filteredData,headers:headers,tableName:tableName},);
-    console.log("RESPOSE",response)
-    console.log(response.data);
+   
+    const response = await axios.post('http://localhost:3000/api/v1/clickHouse/insert-to-clickHouse',{rows:filteredData,headers:headers,tableName:tableName},);
     
-
-    
+    if(response.data){
+      alert("Data Inserted to Clickhouse");
+    }
   }
 
   console.log("selcted headers",selectedHeaders);
@@ -123,7 +117,7 @@ export const DataIngestion: React.FC = () => {
                 <Input label="Host" placeholder="localhost" />
                 <Input label="Port" placeholder="9440" type="number" />
                 <Input label="Database" placeholder="default" />
-                <Input label="User" />
+                <Input label="User" placeholder='username' />
                 <Input label="JWT Token" type="password" className="col-span-2" />
               </div>
             ) : (
@@ -150,19 +144,13 @@ export const DataIngestion: React.FC = () => {
               {
 
                 headers? headers.map((e:any,key:number)=>{
-                  console.log(e);
                 return  <Checkbox key={key} label={e} checked={selectedHeaders.includes(e)} onChange={()=>handleCheckboxChange(e)}/>
                 }):<Checkbox   label='Loading Headers'/>
                 
 
               }
               
-              {/* <Checkbox label="id" />
-              <Checkbox label="name" />
-              <Checkbox label="email" />
-              <Checkbox label="created_at" />
-              <Checkbox label="updated_at" />
-              <Checkbox label="status" /> */}
+              
             </div>
           </div>
         </Card>
