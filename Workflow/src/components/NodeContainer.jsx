@@ -1,6 +1,7 @@
 // src/components/NodeContainer.jsx
 import { Handle, Position } from 'reactflow';
 import { GripVertical, Settings, X, Info } from 'lucide-react';
+import { useStore } from '../store';
 
 export const NodeContainer = ({
   id,
@@ -11,6 +12,11 @@ export const NodeContainer = ({
   outputs = [],
   className = ""
 }) => {
+
+  const deleteNode = useStore((state)=>(state.deleteNode))
+
+  const handleDeleteNode = ()=>deleteNode(id);
+  
   return (
     <div className={`rounded-lg shadow-md bg-[#f5f4ff] border border-gray-300 w-72 ${className}`}>
       {/* Header */}
@@ -22,7 +28,11 @@ export const NodeContainer = ({
         <div className="flex gap-1 text-gray-500">
           <Info size={14} />
           <Settings size={14} />
-          <X size={14} />
+          <X size={14} onClick={()=>{
+         handleDeleteNode()
+            alert("funaction called",id,title)
+            console.log(id)
+          }} />
         </div>
       </div>
 
