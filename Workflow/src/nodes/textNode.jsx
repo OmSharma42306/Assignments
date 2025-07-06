@@ -1,63 +1,35 @@
-import { useEffect, useState } from 'react';
+import { useState, useEffect } from 'react';
+import { NodeContainer } from '../components/NodeContainer';
 import { Handle, Position } from 'reactflow';
 
-const getVariablesFromText = (text) => {
-  const matches = text.match(/{{(.*?)}}/g) || [];
-  return matches.map((m) => m.replace(/[{}]/g, '').trim());
-};
-
 export const TextNode = ({ id, data }) => {
-  const [currText, setCurrText] = useState(data?.text || '{{input}}');
-  const [vars, setVars] = useState(getVariablesFromText(currText));
+  const [currText, setCurrText] = useState(data?.text || '');
 
-  const handleChange = (e) => {
-    const newText = e.target.value;
-    setCurrText(newText);
-    setVars(getVariablesFromText(newText));
+  const handleTextChange = (e) => {
+    setCurrText(e.target.value);
   };
 
-  const dynamicHeight = Math.min(Math.max(currText.length / 3, 60), 200);
+  // Optional: Sync to global state if needed
+  useEffect(() => {
+    // update global state here if you're using `updateNodeField`
+  }, [currText]);
 
   return (
-    <div
-      style={{
-        width: 250,
-        minHeight: dynamicHeight,
-        border: '1px solid black',
-        padding: 10,
-        position: 'relative',
-        backgroundColor: 'white',
-      }}
+    <NodeContainer
+      id={id}
+      title="Text"
+      description="Store or transform your text"
+      inputs={[]} // Add input handles if needed
+      outputs={[{ id: `${id}-output` }]}
     >
-      <div>
-        <strong>Text</strong>
-      </div>
+      <div className="text-xs text-gray-500 font-semibold mb-1">Text</div>
       <textarea
+        placeholder="e.g., {{input}} or static text"
         value={currText}
-        onChange={handleChange}
-        style={{
-          width: '100%',
-          height: '100%',
-          resize: 'none',
-          border: '1px solid #ccc',
-          borderRadius: 4,
-        }}
+        onChange={handleTextChange}
+        className="w-full p-2 rounded border text-sm border-gray-300"
+        rows={3}
       />
-      <Handle
-        type="source"
-        position={Position.Right}
-        id={`${id}-output`}
-        style={{ top: '50%', background: 'blue' }}
-      />
-      {vars.map((v, i) => (
-        <Handle
-          key={v}
-          type="target"
-          position={Position.Left}
-          id={`${id}-var-${v}`}
-          style={{ top: 40 + i * 20, background: 'purple' }}
-        />
-      ))}
-    </div>
+    </NodeContainer>
   );
 };

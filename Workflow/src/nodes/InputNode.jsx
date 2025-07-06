@@ -19,14 +19,14 @@ export const InputNode = ({ id, data }) => {
         className="w-full px-2 py-1 rounded bg-white text-sm border border-gray-300 my-1"
       />
       <div className="text-xs text-gray-500 font-semibold mb-1">Type</div>
-      <select
-        value={inputType}
-        onChange={(e) => setInputType(e.target.value)}
-        className="w-full px-2 py-1 rounded border bg-white text-sm border-gray-300"
-      >
-        <option value="Text">Text</option>
-        <option value="File">File</option>
-      </select>
+     <select
+  value={inputType}
+  onChange={(e) => setInputType(e.target.value)}
+  className="w-full px-2 py-1 rounded-md border text-sm bg-[#F6F4FF] text-gray-800 border-[#DDD5F4] focus:outline-none focus:ring-2 focus:ring-[#C2B8FF]"
+>
+  <option value="Text">Text</option>
+  <option value="File">File</option>
+</select>
     </NodeContainer>
   );
 };
