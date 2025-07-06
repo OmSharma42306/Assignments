@@ -13,6 +13,7 @@ import { OutputNode } from './nodes/outputNode';
 import { TextNode } from './nodes/textNode';
 
 import 'reactflow/dist/style.css';
+import { KnowledgeNode } from './nodes/KnowledgeNode';
 
 const gridSize = 20;
 const proOptions = { hideAttribution: true };
@@ -21,6 +22,7 @@ const nodeTypes = {
   llm: LLMNode,
   customOutput: OutputNode,
   text: TextNode,
+  knowledgeBase : KnowledgeNode 
 };
 
 const selector = (state) => ({
